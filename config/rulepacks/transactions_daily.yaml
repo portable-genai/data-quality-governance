@@ -1,0 +1,39 @@
+# Data-quality rule pack for the fictional `transactions_daily` dataset.
+# Engineered to FAIL fail-closed: a stale partition, a duplicate id, null amounts and an
+# out-of-set currency, so the deterministic verdict is UNCERTIFIED.
+dataset_id: transactions_daily
+owner: payments-data-owner@bank.example
+sla_hours: 24
+rules:
+  - id: tx-id-unique
+    rule_type: uniqueness
+    column: txn_id
+    severity: high
+    owner: payments-data-owner@bank.example
+    description: Transaction ids must be unique.
+    params:
+      min_unique_ratio: "1.0"
+  - id: tx-amount-complete
+    rule_type: completeness
+    column: amount
+    severity: high
+    owner: payments-data-owner@bank.example
+    description: Every transaction must carry an amount.
+    params:
+      max_null_ratio: "0.0"
+  - id: tx-currency-valid
+    rule_type: referential_integrity
+    column: currency
+    severity: medium
+    owner: payments-data-owner@bank.example
+    description: Currency must be one of the settled ISO currencies.
+    params:
+      reference: "SGD|USD|HKD"
+  - id: tx-partition-fresh
+    rule_type: timeliness
+    column: txn_ts
+    severity: high
+    owner: payments-data-owner@bank.example
+    description: The daily partition must land within the freshness SLA.
+    params:
+      max_age_hours: "24"

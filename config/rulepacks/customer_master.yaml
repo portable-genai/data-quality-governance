@@ -1,0 +1,51 @@
+# Data-quality rule pack for the fictional `customer_master` dataset.
+#
+# Rule packs are CONFIGURATION, not code: each rule names a column, a check family, a severity
+# and an owner, and the deterministic engine (`domain/dq_rule_engine.py`) evaluates them. An
+# unknown `rule_type` or `severity` is refused AT LOAD, so a control never silently runs a
+# subset of what was configured. The LLM only ever drafts the human-readable `description`.
+dataset_id: customer_master
+owner: cdo-office@bank.example
+sla_hours: 24
+rules:
+  - id: cm-cust-id-complete
+    rule_type: completeness
+    column: customer_id
+    severity: high
+    owner: cdo-office@bank.example
+    description: The primary key must never be null.
+    params:
+      max_null_ratio: "0.0"
+  - id: cm-cust-id-unique
+    rule_type: uniqueness
+    column: customer_id
+    severity: high
+    owner: cdo-office@bank.example
+    description: Every customer id must be unique.
+    params:
+      min_unique_ratio: "1.0"
+  - id: cm-email-complete
+    rule_type: completeness
+    column: email
+    severity: medium
+    owner: cdo-office@bank.example
+    description: Contactable customers must have an email on file.
+    params:
+      max_null_ratio: "0.05"
+  - id: cm-email-valid
+    rule_type: validity
+    column: email
+    severity: medium
+    owner: cdo-office@bank.example
+    description: Email addresses must be well formed.
+    params:
+      pattern: "[\\w.%+-]+@[\\w.-]+\\.[A-Za-z]{2,}$"
+      min_valid_ratio: "0.95"
+  - id: cm-balance-complete
+    rule_type: completeness
+    column: balance
+    severity: low
+    owner: cdo-office@bank.example
+    description: Account balance should be populated for reporting.
+    params:
+      max_null_ratio: "0.0"

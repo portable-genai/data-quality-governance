@@ -1,0 +1,39 @@
+# Data-quality rule pack for the fictional `marketing_events` dataset.
+# DQ checks pass, but a renamed column (schema drift) and a sensitive-category `health` column
+# make the deterministic verdict CONDITIONAL and route it to human review (rule R8).
+dataset_id: marketing_events
+owner: marketing-data-owner@bank.example
+sla_hours: 24
+rules:
+  - id: me-event-id-complete
+    rule_type: completeness
+    column: event_id
+    severity: high
+    owner: marketing-data-owner@bank.example
+    description: Every event must carry an id.
+    params:
+      max_null_ratio: "0.0"
+  - id: me-event-id-unique
+    rule_type: uniqueness
+    column: event_id
+    severity: high
+    owner: marketing-data-owner@bank.example
+    description: Event ids must be unique.
+    params:
+      min_unique_ratio: "1.0"
+  - id: me-campaign-complete
+    rule_type: completeness
+    column: campaign
+    severity: medium
+    owner: marketing-data-owner@bank.example
+    description: Most events should be attributed to a campaign.
+    params:
+      max_null_ratio: "0.15"
+  - id: me-health-complete
+    rule_type: completeness
+    column: health_condition
+    severity: low
+    owner: marketing-data-owner@bank.example
+    description: The health attribute should be populated where captured.
+    params:
+      max_null_ratio: "0.0"
