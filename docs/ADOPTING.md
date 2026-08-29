@@ -171,7 +171,7 @@ are actually wired here today:
 
 - **Hrz7** human-review and maker-checker console: every escalation is ROUTED, not merely flagged,
   through `ReviewRouterPort` and the shared `review-kit` (rule R8). The offline family
-  enqueues to an inspectable outbox, the managed family submits over S2S to `HRZ_HUMAN_REVIEW_URL`
+  enqueues to an inspectable outbox, the managed family submits over S2S to `HUMAN_REVIEW_URL`
   and REFUSES when no console is configured, and the on-premises family raises. You wire your
   endpoint; you do not re-implement the console.
 - **Hrz4** AI-quality and model-risk gate: `EvaluationGatePort` is bound in all three families.

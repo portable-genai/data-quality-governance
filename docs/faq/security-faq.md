@@ -76,8 +76,8 @@ re-anchoring. In the managed profile the sink is a locked Cloud Logging bucket
 ## What about outbound service-to-service calls?
 
 Two. The Hrz7 review submission goes over the shared `review-kit`, which refuses a plaintext
-non-loopback URL and a missing bearer at construction; the credentials are `HRZ7_S2S_TOKEN` and
-`HRZ7_S2S_SIGNING_KEY`, deliberately DISTINCT variables from this service's own inbound
+non-loopback URL and a missing bearer at construction; the credentials are `HUMAN_REVIEW_S2S_TOKEN` and
+`HUMAN_REVIEW_S2S_SIGNING_KEY`, deliberately DISTINCT variables from this service's own inbound
 `DATAQUALITY_S2S_TOKEN`. The Hrz4 promotion call in `adapters/gcp/evaluation.py` uses the shared
 `agent-eval-kit` client and refuses to run off the managed profile.
 
