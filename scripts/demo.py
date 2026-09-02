@@ -7,7 +7,7 @@ step that stops being true stops passing rather than stops being mentioned.
 
 Three properties make it worth running in front of somebody:
 
-* **Nothing is faked.** No stub service, no pre-baked JSON. The verdicts, the DQ findings, the
+* **Nothing is faked.** No engine stub, no pre-baked JSON. The verdicts, the DQ findings, the
   drift diffs, the PII signals, the audit records and the tamper verdict are produced by the
   shipped code.
 * **It is bounded.** The demo proves an offline, single-process seam. It does not prove
