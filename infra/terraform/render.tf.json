@@ -3,6 +3,6 @@
     "render_region": "asia-southeast1",
     "render_package_name": "data_quality_governance",
     "render_env_prefix": "DATAQUALITY",
-    "render_catalog_id": "H4"
+    "render_repository": "data-quality-governance"
   }
 }

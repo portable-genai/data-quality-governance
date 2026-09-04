@@ -18,7 +18,9 @@ def main(argv: list[str] | None = None) -> int:
     certify_cmd = sub.add_parser("certify", help="Certify a single dataset.")
     certify_cmd.add_argument("dataset_id")
     certify_cmd.add_argument("--actor", default="cli-user@bank.example")
-    certify_cmd.add_argument("--tenant", default="demo-bank", help="Tenant partition (Hrz7).")
+    certify_cmd.add_argument(
+        "--tenant", default="demo-bank", help="Tenant partition (human-review-console)."
+    )
 
     args = parser.parse_args(argv)
     container = build_container()

@@ -84,7 +84,7 @@ unit-test it against the real local adapters.
 Read [`../model-card.md`](../model-card.md) first. There is no generation port today, and the card
 lists what must be true before there is one: the port registered in all five places, a pinned model
 id, budget and rate limits with a kill switch, an eval that scores the LIVE model rather than the
-deterministic pipeline, and prompt-injection screening through the Hrz1 guardrail. The boundary
+deterministic pipeline, and prompt-injection screening through the `agent-guardrail-gateway`. The boundary
 does not move: a model may narrate, summarise or draft remediation prose, and may never produce a
 rule verdict, a drift figure, a PII classification or a certification decision.
 

@@ -69,7 +69,8 @@ class ScorecardResponse(BaseModel):
     requires_human_review: bool
     pass_ratio: float
     certified_metrics: list[str] = []
-    #: Where the escalation WENT (rule R8): the Hrz7 review id, or the local queue reference.
+    #: Where the escalation WENT (rule R8): the human-review-console review id, or the local queue
+    #: reference.
     #: Empty only when the scorecard did not escalate.
     review_ref: str = ""
     dq_findings: list[DQFindingModel] = []

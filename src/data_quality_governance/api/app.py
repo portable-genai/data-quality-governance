@@ -289,7 +289,8 @@ def certify(
 
     The verdict and every number on the scorecard are produced by the deterministic engines, not
     a model. Rule R8: a scorecard that sets ``requires_human_review`` (a decertification, or a
-    sensitive-category PII finding) is ROUTED to the Hrz7 console here, in the same request that
+    sensitive-category PII finding) is ROUTED to the human-review-console here, in the same request
+    that
     produced it. The maker is the verified principal, so the console records who originated it.
     """
     container = _container()

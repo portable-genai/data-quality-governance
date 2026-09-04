@@ -69,8 +69,7 @@ One PII definition, two uses: the classifier and the redactor read the same reco
 
 ### Is anything auto-approved?
 
-No consequential outcome is. Two outcomes set `requires_human_review` and are ROUTED to the Hrz7
-console in the same request that produced them (rule R8): **decertifying** a dataset that was
+No consequential outcome is. Two outcomes set `requires_human_review` and are ROUTED to the `human-review-console` in the same request that produced them (rule R8): **decertifying** a dataset that was
 previously certified, and **any sensitive-category PII finding**. Routing is one act with setting
 the flag, on the API, the CLI and the agent tool alike; the managed router REFUSES when no console
 is configured rather than swallowing the escalation, and the on-premises one raises.
@@ -83,12 +82,12 @@ and note honestly which are wired today:
 
 | Concern | Owned by | H4's position today |
 |---|---|---|
-| Human review and maker-checker console | **Hrz7** `human-review-console` | WIRED. `ReviewRouterPort` in all three families over the shared `review-kit` (rule R8) |
-| AI-quality, eval and promotion gate | **Hrz4** `model-quality-gate` | WIRED as a client. `eval/run_eval.py --mode gate` delegates the verdict and refuses off the managed profile; the bundle is not yet registered with Hrz4 |
-| Observability, tracing and the WORM audit sink | **Hrz5** `agent-observability` | PARTLY WIRED. The tracer exports OTLP to the Hrz5 collector when `OTEL_EXPORTER_OTLP_ENDPOINT` is set; the audit half is the local anchored chain or a locked Cloud Logging bucket |
-| Agent registry, versioning, entitlements | **Hrz3** `agent-registry` | SCAFFOLDED ONLY. The A2A card is served at `/.well-known/agent-card.json`; nothing registers it |
-| Runtime guardrail: injection defence, output filtering | **Hrz1** `agent-guardrail-gateway` | NOT WIRED. There is no `GuardrailPort`. It becomes mandatory the moment untrusted text reaches a model |
-| Governed knowledge base with citations | **Hrz2** `enterprise-knowledge-base` | NOT WIRED, and not needed: there is no retrieval step to ground |
+| Human review and maker-checker console | `human-review-console` | WIRED. `ReviewRouterPort` in all three families over the shared `review-kit` (rule R8) |
+| AI-quality, eval and promotion gate | `model-quality-gate` | WIRED as a client. `eval/run_eval.py --mode gate` delegates the verdict and refuses off the managed profile; the bundle is not yet registered with `model-quality-gate` |
+| Observability, tracing and the WORM audit sink | `agent-observability` | PARTLY WIRED. The tracer exports OTLP to the `agent-observability` collector when `OTEL_EXPORTER_OTLP_ENDPOINT` is set; the audit half is the local anchored chain or a locked Cloud Logging bucket |
+| Agent registry, versioning, entitlements | `agent-registry` | SCAFFOLDED ONLY. The A2A card is served at `/.well-known/agent-card.json`; nothing registers it |
+| Runtime guardrail: injection defence, output filtering | `agent-guardrail-gateway` | NOT WIRED. There is no `GuardrailPort`. It becomes mandatory the moment untrusted text reaches a model |
+| Governed knowledge base with citations | `enterprise-knowledge-base` | NOT WIRED, and not needed: there is no retrieval step to ground |
 
 The `COMPLIANCE.md` R1 to R8 rows say the same thing in control language, and each open one names
 what must be added.
@@ -113,9 +112,9 @@ obviously fictional data. See [`DEMO.md`](../../DEMO.md).
 
 Read `COMPLIANCE.md` and [`practices-audit.md`](../practices-audit.md) rather than trusting a
 summary, but the honest headline: no guardrail port (R1), no retrieval or grounding (P-05, R3),
-no Hrz3 registration (R4), no registered Hrz4 metric bundle (P-08, R5), no timeouts, circuit
+no `agent-registry` registration (R4), no registered `model-quality-gate` metric bundle (P-08, R5), no timeouts, circuit
 breaker or documented kill switch per outbound dependency (P-10), no cost or latency controls
-because there is nothing to route or cache yet (P-11), no Rsk3 intake reference (R6), and no
+because there is nothing to route or cache yet (P-11), no `architecture-validator` intake reference (R6), and no
 object-level authorisation from data tags because there is no queryable store to authorise against
 yet. The policy numbers are also still module constants rather than a `policy:` block in
 `config/settings.yaml` (check B4).

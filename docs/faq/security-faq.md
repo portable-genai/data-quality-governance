@@ -57,7 +57,7 @@ Both matter and they are not interchangeable.
   classification so an auditor can recompute the score.
 
 Redaction runs before both boundaries that leave the process: `adapters/_review_payload.py` redacts
-against EVERY jurisdiction's rows before the review goes to Hrz7, because the console is a shared
+against EVERY jurisdiction's rows before the review goes to `human-review-console`, because the console is a shared
 sink, and `agent/tools.py` masks a tool result before it can become model context.
 `tests/unit/test_not_falsely_green.py` proves the safety metric can actually go red.
 
@@ -75,10 +75,10 @@ re-anchoring. In the managed profile the sink is a locked Cloud Logging bucket
 
 ## What about outbound service-to-service calls?
 
-Two. The Hrz7 review submission goes over the shared `review-kit`, which refuses a plaintext
+Two. The `human-review-console` review submission goes over the shared `review-kit`, which refuses a plaintext
 non-loopback URL and a missing bearer at construction; the credentials are `HUMAN_REVIEW_S2S_TOKEN` and
 `HUMAN_REVIEW_S2S_SIGNING_KEY`, deliberately DISTINCT variables from this service's own inbound
-`DATAQUALITY_S2S_TOKEN`. The Hrz4 promotion call in `adapters/gcp/evaluation.py` uses the shared
+`DATAQUALITY_S2S_TOKEN`. The `model-quality-gate` promotion call in `adapters/gcp/evaluation.py` uses the shared
 `agent-eval-kit` client and refuses to run off the managed profile.
 
 ## Are there secrets in the repo?
@@ -102,14 +102,14 @@ each of these from inside the repo, offline.
 Because there is no model to defend, and claiming the control before it exists would be worse than
 owing it. There is no `GuardrailPort` in `ports/` and no generation adapter in any family (see
 [`model-card.md`](../model-card.md)). Rule R1 in `COMPLIANCE.md` is Partial for exactly this reason
-and names what must be added: bind a `GuardrailPort` to the Hrz1 gateway for injection defence and
+and names what must be added: bind a `GuardrailPort` to the `agent-guardrail-gateway` for injection defence and
 output filtering as soon as untrusted text reaches a model.
 
 ## What is explicitly out of scope for this repo?
 
-The guardrail and prompt-injection engine (**Hrz1**), the governed knowledge base (**Hrz2**), the
-agent registry (**Hrz3**), the AI-quality and promotion gate (**Hrz4**), the enterprise WORM audit
-and trace sink (**Hrz5**), and the human-review console (**Hrz7**). This repo integrates the ones
+The guardrail and prompt-injection engine (`agent-guardrail-gateway`), the governed knowledge base (`enterprise-knowledge-base`), the
+agent registry (`agent-registry`), the AI-quality and promotion gate (`model-quality-gate`), the enterprise WORM audit
+and trace sink (`agent-observability`), and the human-review console (`human-review-console`). This repo integrates the ones
 it has wired through thin adapters rather than re-implementing them; see
 [features-faq.md](features-faq.md) for which are wired today and which are not. Also out of scope
 by design: a login flow (the platform in front authenticates), and object-level authorisation from

@@ -13,9 +13,9 @@ file is written for a specific audience; skim the one that matches your role.
 | [compliance-faq.md](compliance-faq.md) | Compliance, data governance and model risk | regulatory posture, maker-checker, residency enforcement, the audit trail, model-risk evidence for a model-free system |
 
 These FAQs deliberately do **not** re-document capabilities owned by sibling systems in the GRC
-GenAI catalog. Where a concern belongs to another repo (the guardrail gateway Hrz1, the governed
-knowledge base Hrz2, the agent registry Hrz3, the AI-quality gate Hrz4, observability and the WORM
-audit sink Hrz5, the human-review console Hrz7), the FAQ names the owner and explains the boundary
+GenAI catalog. Where a concern belongs to another repo (the guardrail gateway `agent-guardrail-gateway`, the governed
+knowledge base `enterprise-knowledge-base`, the agent registry `agent-registry`, the AI-quality gate `model-quality-gate`, observability and the WORM
+audit sink `agent-observability`, the human-review console `human-review-console`), the FAQ names the owner and explains the boundary
 rather than duplicating it. See [features-faq.md](features-faq.md) for the full "what this repo
 owns vs what it integrates" map, and be aware that several of those integrations are honestly not
 wired yet: the same file says which.
