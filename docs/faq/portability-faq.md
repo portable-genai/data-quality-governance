@@ -28,8 +28,8 @@ Both raises kill the process before it can serve a request.
 - **`local`** is a real, working, SDK-free offline stack: a seeded fictional warehouse with planted
   defects, a fixture catalog, an in-memory baseline store, a hash-chained anchored audit log, an
   inspectable review outbox, a no-op tracer, and an offline eval scorer that REFUSES to promote.
-- **`gcp`** is the managed stack (Cloud Logging WORM, IAP identity, the Hrz7 intake over S2S,
-  BigQuery-style warehouse reads, a Dataplex-style catalog, OpenTelemetry, the Hrz4 promotion
+- **`gcp`** is the managed stack (Cloud Logging WORM, IAP identity, the `human-review-console` intake over S2S,
+  BigQuery-style warehouse reads, a Dataplex-style catalog, OpenTelemetry, the `model-quality-gate` promotion
   gate), with every cloud import LAZY inside the method so the other two profiles import with no
   SDK installed.
 - **`onprem`** is the exit family: fail-fast placeholders that satisfy the same Protocols and
@@ -87,7 +87,7 @@ perimeter. Note the toggles: `var.enable_org_policies`, `var.enable_vpc_sc` and
   preflight REFUSES to start on a managed profile while any of them is selected.
 - Tamper evidence is scoped to what the local sink can prove. `portability_demo.py` says so
   explicitly rather than overclaiming; production non-rewritability is the locked Cloud Logging
-  bucket's job, or Hrz5's.
+  bucket's job, or `agent-observability`'s.
 - The Terraform assertions in `infra/terraform/production_edge.tftest.hcl` are real but unexercised:
   no build step runs `terraform test`, because the offline gate may not need a terraform binary. See
   the P-03 row in [`COMPLIANCE.md`](../../COMPLIANCE.md).

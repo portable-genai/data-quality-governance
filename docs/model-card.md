@@ -15,7 +15,7 @@ so an unregistered generation port could not run unnoticed. There is no generati
 `adapters/local/`, `adapters/gcp/` or `adapters/onprem/`.
 
 One constant can mislead a reader on a grep: `_GATED_MODEL = "gemini-3.5-flash"` in
-`adapters/gcp/evaluation.py`. That is the model identifier the Hrz4 promotion verdict is RECORDED
+`adapters/gcp/evaluation.py`. That is the model identifier the `model-quality-gate` promotion verdict is RECORDED
 AGAINST, so a future model swap invalidates an old verdict rather than inheriting it. Nothing in
 this repo calls that model, or any model.
 
@@ -66,7 +66,7 @@ And the surrounding controls do not move:
   before any outbound payload today; a model call is another boundary and takes the same treatment.
 - **Every output stays cited.** A drafted paragraph that states a figure must be grounded against
   the engine output and DISCARDED on failure, never repaired.
-- **Escalation still routes to Hrz7 under rule R8.** Setting `requires_human_review` and calling
+- **Escalation still routes to `human-review-console` under rule R8.** Setting `requires_human_review` and calling
   `ReviewRouterPort.route` remains one act, in the same request that produced the result.
 
 ## Controls that must exist BEFORE a model is introduced
@@ -76,15 +76,15 @@ And the surrounding controls do not move:
   `Container` accessor, the `adapters:` block in `config/settings.yaml`, and a `PortCase` in
   `tests/contract/canonical.py`; then an adapter in all three families, the `onprem` one raising.
 - **A pinned model id, recorded in this card** together with its prompt version, alongside the
-  `_GATED_MODEL` constant the Hrz4 verdict is keyed to.
+  `_GATED_MODEL` constant the `model-quality-gate` verdict is keyed to.
 - **Budget and rate limits and a kill switch**: a per-tenant token budget, a request rate limit,
   and a switch that forces deterministic-only operation with the model disabled (P-10, P-11).
 - **An eval that scores the LIVE model.** Today `eval/run_eval.py --mode smoke` scores the
   deterministic pipeline, including `narrative_groundedness` against a narrative that is grounded
   by construction. That metric only becomes meaningful once a real model writes the text, so a
-  managed-profile run through the Hrz4 gate must score the model's own groundedness before
+  managed-profile run through the `model-quality-gate` must score the model's own groundedness before
   promotion.
-- **Prompt-injection screening through the Hrz1 guardrail**, failing closed to deterministic-only
+- **Prompt-injection screening through the `agent-guardrail-gateway`**, failing closed to deterministic-only
   when the screen is unavailable. Rule R1 in `COMPLIANCE.md` stays Partial until that port exists.
 
 ## Status

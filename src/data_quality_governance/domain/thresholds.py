@@ -1,13 +1,13 @@
 """Certification thresholds and the eval metric bundle (pure stdlib).
 
-Cribs the shape of Hrz4's ``thresholds.py``: named metric bundles, a ``threshold_for`` that
-RAISES on an unknown metric name (Hrz4's recorded silent-pass fix), and an ``is_borderline``
-margin that flags a marginal pass for review. Two roles live here:
+Cribs the shape of model-quality-gate's ``thresholds.py``: named metric bundles, a ``threshold_for``
+that RAISES on an unknown metric name (model-quality-gate's recorded silent-pass fix), and an
+``is_borderline`` margin that flags a marginal pass for review. Two roles live here:
 
 * the CERTIFICATION bands (:data:`CERT_MIN_PASS_RATIO`, :data:`CONDITIONAL_MIN_PASS_RATIO`) the
   scorecard folds its per-check results against, and
 * the EVAL bundle (:data:`METRIC_BUNDLES`) ``eval/run_eval.py`` gates against, mirroring the
-  sibling-bundle pattern Hrz4's map exists to serve.
+  sibling-bundle pattern model-quality-gate's map exists to serve.
 
 The bars are deliberately strict for a second-line control: a dataset is not CERTIFIED while a
 HIGH/CRITICAL check fails, its data is stale, or a sensitive-category PII column is unreviewed.

@@ -117,7 +117,9 @@ def test_the_offline_outbox_flushes_the_payload_the_managed_router_would_submit(
 
 
 def test_the_payload_that_reaches_the_wire_is_redacted_whichever_family_built_it() -> None:
-    """Hrz7 is a shared sink, so this holds for every family, not only the one under demo."""
+    """human-review-console is a shared sink, so this holds for every family, not only the one under
+    demo.
+    """
     result = sample_cases.escalating_scorecard()
     payload = repr(
         result_to_review(result, maker=sample_cases.ACTOR, tenant=sample_cases.TENANT).to_payload()

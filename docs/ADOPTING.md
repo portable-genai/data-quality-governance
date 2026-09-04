@@ -34,7 +34,7 @@ rewrites `models.py` and leaves `kernel.py` untouched.
 | **Vertical** (the governance artifacts) | the artifact models in `domain/models.py` (`RulePack`, `DQFinding`, `FreshnessResult`, `DriftFinding`, `PiiClassification`, `RemediationTicket`, `DatasetScorecard`, `CertificationResponse` and the four taxonomies), the engines that produce them (`profile_service`, `dq_rule_engine`, `freshness_service`, `drift_service`, `pii_classifier`, `remediation_service`, `scorecard_service`, `certification_service`), the seeded warehouse and catalog fixtures, the eval golden set, and the UI panels | rewrite or reseed for your framework |
 
 If your product is another *data-governance or assurance* service, most of the kernel, the three
-profiles, the deterministic-verdict pattern, the anchored audit chain, the eval gate and the Hrz7
+profiles, the deterministic-verdict pattern, the anchored audit chain, the eval gate and the `human-review-console`
 review routing transfer directly. You replace the artifact models and the engines, and you retune
 the policy numbers.
 
@@ -169,34 +169,34 @@ are actually wired here today:
 
 **Wired, through a bound port:**
 
-- **Hrz7** human-review and maker-checker console: every escalation is ROUTED, not merely flagged,
+- `human-review-console` human-review and maker-checker console: every escalation is ROUTED, not merely flagged,
   through `ReviewRouterPort` and the shared `review-kit` (rule R8). The offline family
   enqueues to an inspectable outbox, the managed family submits over S2S to `HUMAN_REVIEW_URL`
   and REFUSES when no console is configured, and the on-premises family raises. You wire your
   endpoint; you do not re-implement the console.
-- **Hrz4** AI-quality and model-risk gate: `EvaluationGatePort` is bound in all three families.
-  `eval/run_eval.py --mode gate` delegates the promotion verdict to Hrz4 and refuses to run off
+- `model-quality-gate`: `EvaluationGatePort` is bound in all three families.
+  `eval/run_eval.py --mode gate` delegates the promotion verdict to `model-quality-gate` and refuses to run off
   the managed profile; the local adapter scores offline but refuses to promote.
-- **Hrz5** observability: `ObservabilityTracerPort` is bound in all three families, and the managed
-  tracer exports OTLP to the Hrz5 collector when `OTEL_EXPORTER_OTLP_ENDPOINT` is set and straight
+- `agent-observability`: `ObservabilityTracerPort` is bound in all three families, and the managed
+  tracer exports OTLP to the `agent-observability` collector when `OTEL_EXPORTER_OTLP_ENDPOINT` is set and straight
   to Cloud Trace when it is not.
 
 **Scaffolded but not yet registered:**
 
-- **Hrz3** agent registry: the A2A card is built from the same tool table the runtime binds and
-  served at `/.well-known/agent-card.json`, but nothing registers it with Hrz3 and the agent's
+- `agent-registry`: the A2A card is built from the same tool table the runtime binds and
+  served at `/.well-known/agent-card.json`, but nothing registers it with `agent-registry` and the agent's
   identity and entitlements are not taken from it. Rule R4 in `COMPLIANCE.md` names this openly.
 
 **Honestly NOT integrated today:**
 
-- **Hrz1** guardrail gateway: there is no `GuardrailPort` in `ports/`. Redaction happens locally
+- `agent-guardrail-gateway`: there is no `GuardrailPort` in `ports/`. Redaction happens locally
   with the shared `pii-kit` before the audit write and before any outbound payload, which is not
   the same thing as injection defence and output filtering. Rule R1 stays Partial until a
   guardrail port exists, and it becomes mandatory the moment untrusted text reaches a model.
-- **Hrz2** governed knowledge base: there is no retrieval port and nothing to ground, so P-05 and
+- `enterprise-knowledge-base` governed knowledge base: there is no retrieval port and nothing to ground, so P-05 and
   rule R3 are honestly open rather than claimed.
-- **Mkt6** marketing compliance: not applicable. This service produces no customer-facing output.
-- **Rsk3** architecture and requirements validator: an intake action, not a code control. Record
+- `marketing-compliance-gate` marketing compliance: not applicable. This service produces no customer-facing output.
+- `architecture-validator` architecture and requirements validator: an intake action, not a code control. Record
   your validation reference in `COMPLIANCE.md` when the project passes it.
 
 **Downstream, not a dependency:** H4 hands its per-dataset certification verdict to **H1** (the
@@ -215,5 +215,5 @@ you have made a breaking cross-system change.
 - [ ] Replaced the seeded warehouse, the catalog lineage edges and every synthetic fixture.
 - [ ] Rebuilt `eval/datasets/golden_cases.jsonl` and its `expected_*` labels for your control set.
 - [ ] Reviewed the deploy posture (Dockerfile, Terraform toggles, bind address) and set a durable `DATAQUALITY_AUDIT_PATH` with a `DATAQUALITY_AUDIT_ANCHOR` on a different volume.
-- [ ] Wired your Hrz7 review endpoint and decided which other sibling services you integrate vs leave open.
+- [ ] Wired your `human-review-console` review endpoint and decided which other sibling services you integrate vs leave open.
 - [ ] Recorded your baseline upstream tag so you can take future fixes.

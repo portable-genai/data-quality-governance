@@ -4,10 +4,10 @@
 Two named layers via ``--mode`` (the scaffold is ``agent_eval_kit.eval_main``):
 
 * **smoke** (default) - the offline pre-merge check CI runs on every change: it drives the REAL
-  deterministic engines and the certification orchestrator against a golden set with SDK-free
-  local adapters and scores the ``h4-data-quality`` bundle.
-* **gate** - the promotion verdict from the shared Hrz4 authority (requires the ``gcp``
-  profile), via ``agent_eval_kit.PromotionGateClient``.
+  deterministic engines and the certification orchestrator against a golden set with SDK-free local
+  adapters and scores the ``h4-data-quality`` bundle. * **gate** - the promotion verdict from the
+  shared model-quality-gate authority (requires the ``gcp`` profile), via
+  ``agent_eval_kit.PromotionGateClient``.
 
 Every metric scores against the DATASET'S OWN ``expected_*`` label (an independent golden
 oracle), NEVER against the pipeline's own verdict, and every metric is proved able to go RED via
@@ -60,7 +60,8 @@ _REPO_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_DATASET = _REPO_ROOT / "eval" / "datasets" / "golden_cases.jsonl"
 
 THRESHOLDS: dict[str, float] = bundle_thresholds("h4-data-quality")
-#: The registered Hrz4 metric bundle for this vertical (Hrz4 owns the metrics + thresholds).
+#: The registered model-quality-gate metric bundle for this vertical (model-quality-gate owns the
+#: metrics + thresholds).
 _BUNDLE = "h4-data-quality"
 
 _NUM = re.compile(r"\d+(?:\.\d+)?")
@@ -343,6 +344,6 @@ if __name__ == "__main__":
             smoke=run_smoke,
             gate=run_gate,
             default_dataset=DEFAULT_DATASET,
-            description="Offline / Hrz4 evaluation gate for H4.",
+            description="Offline / model-quality-gate for H4.",
         )
     )
