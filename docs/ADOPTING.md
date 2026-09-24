@@ -172,7 +172,8 @@ are actually wired here today:
 - `human-review-console` human-review and maker-checker console: every escalation is ROUTED, not merely flagged,
   through `ReviewRouterPort` and the shared `review-kit` (rule R8). The offline family
   enqueues to an inspectable outbox, the managed family submits over S2S to `HUMAN_REVIEW_URL`
-  and REFUSES when no console is configured, and the on-premises family raises. You wire your
+  (with routing on, the managed profile refuses to boot without one; `DATAQUALITY_REVIEW_ROUTING=off`
+  is the stated way to run without routing), and the on-premises family raises. You wire your
   endpoint; you do not re-implement the console.
 - `model-quality-gate`: `EvaluationGatePort` is bound in all three families.
   `eval/run_eval.py --mode gate` delegates the promotion verdict to `model-quality-gate` and refuses to run off

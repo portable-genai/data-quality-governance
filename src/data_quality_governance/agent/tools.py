@@ -21,6 +21,7 @@ from typing import TYPE_CHECKING, Any
 from hex_service_kit.serialization import to_jsonable
 from pii_kit import redact
 
+from ..adapters.controls import RecordingReviewRouter
 from ..config import Container, Settings, build_container
 from ..domain.pii import PII_PATTERNS
 from ..service_factory import build_certification_service
@@ -76,20 +77,21 @@ def certify_dataset(
 
     Returns:
       A JSON-safe result dict with every string masked for personal data (P-04: a tool result
-      goes into a model's context), plus ``review_ref``: where the escalation WENT. It is empty
-      only when the scorecard did not escalate.
+      goes into a model's context), plus ``review_ref``: where the escalation WENT, and
+      ``review_routing``: routed, failed, off or not_required. The reference is empty unless the
+      hand-off was routed.
     """
     container = _container(settings)
     result = build_certification_service(container).certify(dataset_id, actor=actor, tenant=tenant)
-    review_ref = ""
-    if result.requires_human_review:
-        review_ref = container.review_router.route(result, maker=actor, tenant=tenant)
+    routing = RecordingReviewRouter(container.review_router)
+    review_ref = routing.route(result, maker=actor, tenant=tenant)
     payload = _redacted(to_jsonable(result))
     if not isinstance(payload, dict):  # pragma: no cover - dataclasses serialise to objects
         raise TypeError("a scorecard must serialise to a JSON object")
     # Attached after the redaction pass: it is a routing reference, not narrative text, and
     # masking an identifier would break the caller's ability to look the review up.
     payload["review_ref"] = review_ref
+    payload["review_routing"] = routing.outcome.value
     return payload
 
 

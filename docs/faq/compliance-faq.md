@@ -12,8 +12,9 @@ It computes them deterministically and escalates the consequential ones. Two out
 that produced them (dependency rule R8): DECERTIFYING a dataset that was previously certified, and
 ANY sensitive-category PII finding. Setting the flag and calling `ReviewRouterPort.route` is one
 act, on the API, the CLI and the agent tool alike, so an escalation never depends on a later job
-that may not exist. The managed router REFUSES when no console is configured rather than swallowing
-the escalation, and the on-premises one raises. A local router that silently did nothing would let
+that may not exist. Under the managed profile, routing on with no console configured REFUSES TO
+BOOT, a hand-off that fails at request time is reported as `review_routing: "failed"` rather than
+read as reviewed, and the on-premises router raises. A local router that silently did nothing would let
 a producer ship R8 unwired and green, which is why the offline one enqueues to an inspectable
 outbox instead.
 
