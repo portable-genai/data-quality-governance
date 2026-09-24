@@ -7,6 +7,8 @@ wire H1 (and any downstream) consumes, pinned by the API contract test.
 
 from __future__ import annotations
 
+from typing import Literal
+
 from pydantic import BaseModel
 
 from ..domain.models import CertificationResponse, DatasetScorecard
@@ -70,9 +72,11 @@ class ScorecardResponse(BaseModel):
     pass_ratio: float
     certified_metrics: list[str] = []
     #: Where the escalation WENT (rule R8): the human-review-console review id, or the local queue
-    #: reference.
-    #: Empty only when the scorecard did not escalate.
+    #: reference. Empty exactly when ``review_routing`` is not ``routed``.
     review_ref: str = ""
+    #: What happened to the hand-off: routed, failed, off or not_required. ``failed`` means the
+    #: scorecard is NOT queued for review, and the console says so.
+    review_routing: Literal["routed", "failed", "off", "not_required"] = "not_required"
     dq_findings: list[DQFindingModel] = []
     drift: list[DriftModel] = []
     pii: list[PiiModel] = []
@@ -81,7 +85,9 @@ class ScorecardResponse(BaseModel):
     citations: list[CitationModel] = []
 
     @classmethod
-    def from_domain(cls, s: DatasetScorecard, *, review_ref: str = "") -> ScorecardResponse:
+    def from_domain(
+        cls, s: DatasetScorecard, *, review_ref: str = "", review_routing: str = "not_required"
+    ) -> ScorecardResponse:
         return cls(
             dataset_id=s.subject,
             status=s.status.value,
@@ -93,6 +99,7 @@ class ScorecardResponse(BaseModel):
             pass_ratio=s.pass_ratio,
             certified_metrics=list(s.certified_metrics),
             review_ref=review_ref,
+            review_routing=review_routing,  # type: ignore[arg-type]
             dq_findings=[
                 DQFindingModel(
                     column=f.column,

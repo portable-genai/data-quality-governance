@@ -71,8 +71,9 @@ One PII definition, two uses: the classifier and the redactor read the same reco
 
 No consequential outcome is. Two outcomes set `requires_human_review` and are ROUTED to the `human-review-console` in the same request that produced them (rule R8): **decertifying** a dataset that was
 previously certified, and **any sensitive-category PII finding**. Routing is one act with setting
-the flag, on the API, the CLI and the agent tool alike; the managed router REFUSES when no console
-is configured rather than swallowing the escalation, and the on-premises one raises.
+the flag, on the API, the CLI and the agent tool alike; under the managed profile, routing on
+with no console configured refuses at boot, a failed hand-off is reported as
+`review_routing: "failed"`, and the on-premises router raises.
 
 ### Which capabilities does this repo own vs integrate from the catalog?
 

@@ -67,6 +67,7 @@ from hex_service_kit.web import (
     make_require_service_caller,
 )
 
+from ..adapters.controls import RecordingReviewRouter
 from ..config import (
     LOCAL_PROFILE,
     Container,
@@ -296,12 +297,13 @@ def certify(
     container = _container()
     service = build_certification_service(container)
     result = service.certify(request.dataset_id, actor=principal.actor, tenant=principal.tenant)
-    review_ref = ""
-    if result.requires_human_review:
-        review_ref = container.review_router.route(
-            result, maker=principal.actor, tenant=principal.tenant
-        )
-    return ScorecardResponse.from_domain(result, review_ref=review_ref)
+    # The hand-off never fails an already-certified, already-audited scorecard; the response says
+    # what happened to it instead (the fleet's runtime-control contract).
+    routing = RecordingReviewRouter(container.review_router)
+    review_ref = routing.route(result, maker=principal.actor, tenant=principal.tenant)
+    return ScorecardResponse.from_domain(
+        result, review_ref=review_ref, review_routing=routing.outcome.value
+    )
 
 
 @app.get(
