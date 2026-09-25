@@ -28,6 +28,15 @@ function reviewRoutingOf(body: string): string | undefined {
   }
 }
 
+// The datasets the local profile's fixture warehouse seeds, all fictional. There is no list route,
+// so these are offered as suggestions and the field stays free text: a managed deployment's
+// warehouse names its own datasets, and the service is the one that says whether it knows an id.
+const SEEDED_DATASETS: { id: string; note: string }[] = [
+  { id: "transactions_daily", note: "stale partition, duplicate id, null amounts" },
+  { id: "customer_master", note: "clean and fresh" },
+  { id: "marketing_events", note: "schema drift and a sensitive-category column" },
+];
+
 interface CardSummary {
   name?: string;
   description?: string;
@@ -36,8 +45,7 @@ interface CardSummary {
 
 export default function Home() {
   const [persona, setPersona] = useState(PERSONAS[0]);
-  const [subject, setSubject] = useState("Acme Holdings (FICTIONAL)");
-  const [text, setText] = useState("urgent data breach reported by the branch");
+  const [datasetId, setDatasetId] = useState(SEEDED_DATASETS[0].id);
   const [result, setResult] = useState("");
   const [failed, setFailed] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -57,16 +65,11 @@ export default function Home() {
     };
   }, []);
 
-  async function submit(event: React.FormEvent) {
-    event.preventDefault();
+  async function show(request: Promise<Response>) {
     setBusy(true);
     setFailed(false);
     try {
-      const response = await fetch(API + "/v1/triage", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "X-Dev-Persona": persona },
-        body: JSON.stringify({ subject, text }),
-      });
+      const response = await request;
       const body = await response.text();
       setFailed(!response.ok);
       setResult(body);
@@ -78,12 +81,36 @@ export default function Home() {
     }
   }
 
+  // The request is the dataset id and nothing else: the verdict, the metrics and the actor all
+  // come from the service, which is the whole of `CertifyRequest`.
+  function submit(event: React.FormEvent) {
+    event.preventDefault();
+    void show(
+      fetch(API + "/v1/certify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-Dev-Persona": persona },
+        body: JSON.stringify({ dataset_id: datasetId }),
+      }),
+    );
+  }
+
+  // The narrow status wire a downstream consumer reads. It answers 404 until this persona's tenant
+  // has certified the dataset, and 403 for a dataset certified only under another tenant.
+  function readStatus() {
+    void show(
+      fetch(API + "/v1/certification/" + encodeURIComponent(datasetId), {
+        cache: "no-store",
+        headers: { "X-Dev-Persona": persona },
+      }),
+    );
+  }
+
   return (
     <main>
       <h1>{card?.name ?? "Agent console"}</h1>
       <p className="sub">
         {card?.description ??
-          "Submit a case. The decision is deterministic, cited, and routed to a human reviewer when it escalates."}
+          "Certify a dataset. The scorecard is deterministic, cited, and routed to a human reviewer when it escalates."}
       </p>
 
       <form onSubmit={submit}>
@@ -102,17 +129,27 @@ export default function Home() {
         </fieldset>
 
         <fieldset>
-          <legend>The case</legend>
+          <legend>The dataset</legend>
           <label>
-            Subject
-            <input value={subject} onChange={(event) => setSubject(event.target.value)} />
+            Dataset id (the local profile seeds the fictional datasets suggested here)
+            <input
+              list="seeded-datasets"
+              value={datasetId}
+              onChange={(event) => setDatasetId(event.target.value)}
+            />
+            <datalist id="seeded-datasets">
+              {SEEDED_DATASETS.map((dataset) => (
+                <option key={dataset.id} value={dataset.id}>
+                  {dataset.note}
+                </option>
+              ))}
+            </datalist>
           </label>
-          <label>
-            Description
-            <textarea value={text} onChange={(event) => setText(event.target.value)} />
-          </label>
-          <button type="submit" disabled={busy}>
-            {busy ? "Working" : "Triage this case"}
+          <button type="submit" disabled={busy || !datasetId.trim()}>
+            {busy ? "Working" : "Certify this dataset"}
+          </button>{" "}
+          <button type="button" disabled={busy || !datasetId.trim()} onClick={readStatus}>
+            Read its certification status
           </button>
         </fieldset>
       </form>

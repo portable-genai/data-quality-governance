@@ -167,7 +167,7 @@ assertion, and this UI discards those.
 | `lib/server/identity.ts` | The only place an actor is decided. Never reads a browser-supplied value except the validated dev persona. |
 | `app/api/agent/[...path]/route.ts` | The same-origin reverse proxy: strip, resolve, forward, answer. |
 | `proxy.ts` | The document-layer header baseline on every response. |
-| `app/page.tsx` | The console itself. It reads the service's agent card for its own title, so no product name is hardcoded here. |
+| `app/page.tsx` | The console itself. It reads the service's agent card for its own title, so no product name is hardcoded here. It certifies a dataset by id through `POST /v1/certify` and reads the result back from `GET /v1/certification/{dataset_id}`, suggesting the fictional datasets the local profile seeds. `tests/unit/test_console_matches_api.py` holds every call against the served routes. |
 | `tests/` | Node tests for the policy modules, plus the scanner that fails the build on a two-state environment read anywhere in `ui/`. No browser engine, so they run anywhere. |
 
 ## Bounds of this UI
